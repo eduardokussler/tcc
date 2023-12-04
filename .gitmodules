@@ -1,0 +1,36 @@
+[submodule "projetos/ExaMiniMD"]
+	path = projetos/ExaMiniMD
+	url = https://github.com/ECP-copa/ExaMiniMD.git
+[submodule "projetos/Quicksilver"]
+	path = projetos/Quicksilver
+	url = https://github.com/LLNL/Quicksilver.git
+[submodule "projetos/ExaMPM"]
+	path = projetos/ExaMPM
+	url = https://github.com/ECP-copa/ExaMPM.git
+[submodule "projetos/SNAP"]
+	path = projetos/SNAP
+	url = https://github.com/lanl/SNAP.git
+[submodule "projetos/codesign-kernels"]
+	path = projetos/codesign-kernels
+	url = https://github.com/E3SM-Project/codesign-kernels.git
+[submodule "projetos/RIOPA.jl"]
+	path = projetos/RIOPA.jl
+	url = https://github.com/ORNL/RIOPA.jl.git
+[submodule "projetos/GAMESS_RI-MP2_MiniApp"]
+	path = projetos/GAMESS_RI-MP2_MiniApp
+	url = https://github.com/jkwack/GAMESS_RI-MP2_MiniApp.git
+[submodule "projetos/Cabana"]
+	path = projetos/Cabana
+	url = https://github.com/ECP-copa/Cabana.git
+[submodule "projetos/fftx"]
+	path = projetos/fftx
+	url = https://github.com/spiral-software/fftx.git
+[submodule "projetos/goulash"]
+	path = projetos/goulash
+	url = https://github.com/LLNL/goulash.git
+[submodule "projetos/IAMR"]
+	path = projetos/IAMR
+	url = https://github.com/AMReX-Fluids/IAMR.git
+[submodule "projetos/hypar"]
+	path = projetos/hypar
+	url = https://bitbucket.org/deboghosh/hypar/
