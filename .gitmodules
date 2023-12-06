@@ -10,9 +10,6 @@
 [submodule "projetos/SNAP"]
 	path = projetos/SNAP
 	url = https://github.com/lanl/SNAP.git
-[submodule "projetos/codesign-kernels"]
-	path = projetos/codesign-kernels
-	url = https://github.com/E3SM-Project/codesign-kernels.git
 [submodule "projetos/RIOPA.jl"]
 	path = projetos/RIOPA.jl
 	url = https://github.com/ORNL/RIOPA.jl.git
