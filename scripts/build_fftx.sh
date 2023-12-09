@@ -20,6 +20,5 @@ cd src/library
 cd ../..
 mkdir install
 mkdir build; cd build
-cmake -DCMAKE_INSTALL_PREFIX=$FFTX_HOME/install/fftx -D_codegen=CPU ..      # build for CPU, *or*
 cmake -DCMAKE_INSTALL_PREFIX=$FFTX_HOME/install/fftx -D_codegen=CUDA ..     # build for CUDA, *or*
 make install
