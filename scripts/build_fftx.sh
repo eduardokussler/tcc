@@ -20,5 +20,6 @@ cd src/library
 cd ../..
 mkdir install
 mkdir build; cd build
-cmake -DCMAKE_INSTALL_PREFIX=$FFTX_HOME/install/fftx -D_codegen=CUDA ..     # build for CUDA, *or*
+#cmake -DCMAKE_INSTALL_PREFIX=$FFTX_HOME/install/fftx -DCMAKE_CUDA_COMPILER=/home/ekussler/kokkos/bin/nvcc_wrapper -D_codegen=CUDA ..     # build for CUDA, *or*
+cmake -DCMAKE_INSTALL_PREFIX=$FFTX_HOME/install/fftx -DCMAKE_CUDA_HOST_COMPILER=$(which gcc-9) -D_codegen=CUDA ..
 make install
