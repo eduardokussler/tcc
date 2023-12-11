@@ -31,3 +31,6 @@
 [submodule "projetos/hypar"]
 	path = projetos/hypar
 	url = https://bitbucket.org/deboghosh/hypar/
+[submodule "projetos/CabanaPIC"]
+	path = projetos/CabanaPIC
+	url = https://github.com/ECP-copa/CabanaPIC.git
