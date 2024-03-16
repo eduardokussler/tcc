@@ -1,11 +1,11 @@
 # TODO: YOU, THE USER, SHOULD CHANGE THESE TO YOUR DESIRED PATHS
 export KOKKOS_SRC_DIR=`pwd`
 export KOKKOS_INSTALL_DIR=$KOKKOS_SRC_DIR/build/install
-
-
+shopt -s expand_aliases
+alias cmake_new="/home/users/eekussler/cmake/bin/cmake"
 mkdir build
 cd build
-/scratch/eekussler/cmake/cmake-3.28.0/bin/cmake \
+cmake_new  \
   -D CMAKE_BUILD_TYPE="Release" \
   -D CMAKE_CXX_COMPILER=$KOKKOS_SRC_DIR/bin/nvcc_wrapper \
   -D CMAKE_INSTALL_PREFIX=$KOKKOS_INSTALL_DIR \
