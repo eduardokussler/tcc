@@ -10,7 +10,6 @@ cd build
     -D CMAKE_INSTALL_PREFIX=$CABANA_INSTALL_DIR \
     -D CMAKE_CXX_COMPILER=$KOKKOS_SRC_DIR/bin/nvcc_wrapper \
     -D Cabana_REQUIRE_CUDA=ON \
-    -D Cabana_ENABLE_EXAMPLES=ON \
     .. ;
 make -j 8 install
 # -D Cabana_ENABLE_TESTING=ON
