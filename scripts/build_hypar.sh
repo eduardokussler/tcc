@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir install
-autoconf ./configure.ac
+autoreconf -i
 ./configure --prefix=`pwd`/install
 make
 make check
