@@ -19,3 +19,12 @@
 [submodule "projetos/hypar"]
 	path = projetos/hypar
 	url = https://bitbucket.org/deboghosh/hypar/
+[submodule "projetos/dependencies/kokkos"]
+	path = projetos/dependencies/kokkos
+	url = https://github.com/kokkos/kokkos.git
+[submodule "projetos/dependencies/amrex"]
+	path = projetos/dependencies/amrex
+	url = https://github.com/AMReX-Codes/amrex.git
+[submodule "projetos/dependencies/AMReX-Hydro"]
+	path = projetos/dependencies/AMReX-Hydro
+	url = https://github.com/AMReX-Codes/AMReX-Hydro.git
