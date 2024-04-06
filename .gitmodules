@@ -28,3 +28,6 @@
 [submodule "projetos/dependencies/AMReX-Hydro"]
 	path = projetos/dependencies/AMReX-Hydro
 	url = https://github.com/AMReX-Codes/AMReX-Hydro.git
+[submodule "projetos/miniMDock"]
+	path = projetos/miniMDock
+	url = https://github.com/ORNL-PE/miniMDock
