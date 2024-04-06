@@ -15,7 +15,7 @@ pwd
 shopt -s nullglob
 shopt -s dotglob
 
-EXAMPLES=(./*)
+EXAMPLES=(*/)
 
 
 for test in ${EXAMPLES[@]}; do
