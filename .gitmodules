@@ -34,3 +34,9 @@
 [submodule "projetos/Kripke"]
 	path = projetos/Kripke
 	url = https://github.com/LLNL/Kripke.git
+[submodule "projetos/hipBone"]
+	path = projetos/hipBone
+	url = https://github.com/paranumal/hipBone.git
+[submodule "projetos/LULESH"]
+	path = projetos/LULESH
+	url = https://github.com/LLNL/LULESH.git
