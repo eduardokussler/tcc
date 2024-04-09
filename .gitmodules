@@ -31,3 +31,6 @@
 [submodule "projetos/miniMDock"]
 	path = projetos/miniMDock
 	url = https://github.com/ORNL-PE/miniMDock
+[submodule "projetos/Kripke"]
+	path = projetos/Kripke
+	url = https://github.com/LLNL/Kripke.git
