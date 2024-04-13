@@ -40,6 +40,3 @@
 [submodule "projetos/LULESH"]
 	path = projetos/LULESH
 	url = https://github.com/LLNL/LULESH.git
-[submodule "projetos/FlexFlow"]
-	path = projetos/FlexFlow
-	url = https://github.com/flexflow/FlexFlow.git
