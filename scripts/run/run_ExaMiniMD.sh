@@ -1,3 +1,5 @@
 #!/bin/bash
-
-make -j KOKKOS_ARCH=SNB,Pascal60 KOKKOS_DEVICES=Cuda CXX=nvcc MPI=0
+export OMPI_CXX=/home/eekussler/tcc/projetos/dependencies/kokkos/bin/nvcc_wrapper
+export CUDA_PATH=/usr/local/cuda-11.7/
+make clean
+make -j 1 KOKKOS_ARCH=SNB,Ampere80 KOKKOS_DEVICES=Cuda CXX=$OMPI_CXX MPI=0
