@@ -1,6 +1,8 @@
 '''Class to interact with the nvidia-smi commands'''
 
 import subprocess
+import os.path
+from threading import Thread
 
 
 class NvidiaSmi():
@@ -43,4 +45,22 @@ class NvidiaSmi():
     @staticmethod
     def reset_frequencies():
         command = 'nvidia-smi --reset-applications-clocks'
-        subprocess.run(command, shell=True)
+        subprocess.run(command, shell=True, capture_output=True, text=True)
+
+    
+    '''Get gpu performance data
+        power(watts)
+        temperature(celsius)
+        memory usage (%)
+        sm usage (%)
+        
+        returns the output as string
+
+    '''
+    @staticmethod
+    def get_telemetry_data() -> str:
+        command = f'nvidia-smi dmon --count 1 -o T'
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        return result.stdout
+
+    
