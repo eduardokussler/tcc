@@ -3,6 +3,7 @@
 import subprocess
 import os.path
 from threading import Thread
+from classes.utils import Platform
 
 
 class NvidiaSmi():
@@ -38,13 +39,20 @@ class NvidiaSmi():
     
     '''Set the specified frequencies on the gpu'''
     @staticmethod
-    def set_frequency(frequency_mhz:dict):
-        command = f'nvidia-smi -ac={frequency_mhz["memory"]},{frequency_mhz["sm"]}'
+    def set_frequency(frequency_mhz:dict, platform:Platform):
+        command = ''
+        if platform == Platform.ENTERPRISE:
+            command = f'nvidia-smi --applications-clocks={frequency_mhz["memory"]},{frequency_mhz["sm"]}'
+        else:
+            command = f'nvidia-smi --lock-gpu-clocks {frequency_mhz["sm"]},{frequency_mhz["sm"]}'
         subprocess.run(command, shell=True)
 
     @staticmethod
-    def reset_frequencies():
-        command = 'nvidia-smi --reset-applications-clocks'
+    def reset_frequencies(platform:Platform):
+        if platform == Platform.ENTERPRISE:
+            command = 'nvidia-smi --reset-applications-clocks'
+        else:
+            command = 'nvidia-smi --reset-gpu-clocks'
         subprocess.run(command, shell=True, capture_output=True, text=True)
 
     

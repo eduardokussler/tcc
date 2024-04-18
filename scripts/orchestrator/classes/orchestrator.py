@@ -13,19 +13,21 @@ from classes.variator import Variator
 from classes.utils import *
 from classes.nvidia_smi_wrapper import NvidiaSmi
 from classes.telemetry import Telemetry
+from classes.utils import Platform
 
 
 
 class Orchestrator:
-    def __init__(self):
-        self.variator = Variator()
+    def __init__(self, platform:Platform):
+        NvidiaSmi.reset_frequencies(platform)
+        self.variator = Variator(platform)
+        self.platform = platform
     
     def perform_experiment(self, run_script, measurements_interval:float=1):
-        NvidiaSmi.reset_frequencies()
         valid_frequency = True
         # Use name of script as output file
         telemetry_thread = Telemetry('telemetry_'+run_script.split('/').pop().split('.')[0])
-        telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
+        telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
         telemetry_thread.start_telemetry_thread(measurements_interval)
 
 
@@ -33,16 +35,17 @@ class Orchestrator:
         while valid_frequency:
             subprocess.run(run_script, shell=True)
             valid_frequency = self.variator.variate_frequency_up('sm')
-            telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
+            telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
 
-        NvidiaSmi.reset_frequencies()
-        valid_frequency = True
+        if self.platform == Platform.ENTERPRISE:
+            NvidiaSmi.reset_frequencies()
+            valid_frequency = True
 
-        '''Run experiment for all available memory frequencies'''
-        while valid_frequency:
-            subprocess.run(run_script, shell=True)
-            valid_frequency = valid_frequency = self.variator.variate_frequency_up('memory')
-            telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
+            '''Run experiment for all available memory frequencies'''
+            while valid_frequency:
+                subprocess.run(run_script, shell=True)
+                valid_frequency = valid_frequency = self.variator.variate_frequency_up('memory')
+                telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
 
 
         telemetry_thread.running = False

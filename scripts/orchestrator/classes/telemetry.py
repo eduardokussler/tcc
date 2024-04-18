@@ -1,8 +1,8 @@
 
+import time
 from threading import Thread, Lock
 from classes.nvidia_smi_wrapper import NvidiaSmi
-import time
-
+from classes.utils import Platform
 
 class Telemetry:
     def __init__(self, filename):
@@ -49,8 +49,12 @@ class Telemetry:
         self.output_file.close()
         self.stopped = True
     
-    def write_new_current_frequencies(self, frequencies: dict):
+    def write_new_current_frequencies(self, frequencies: dict, platform:Platform):
         self.lock.acquire()
-        self.string_result = self.string_result + '\n' + f'Memory: {frequencies["memory"]}MHz  SMs: {frequencies["sm"]}MHz\n'
+        if platform == Platform.ENTERPRISE:
+            self.string_result = self.string_result + '\n' + f'Memory: {frequencies["memory"]}MHz  SMs: {frequencies["sm"]}MHz\n'
+        else:
+            self.string_result = self.string_result + '\n' + f'SMs: {frequencies["sm"]}MHz\n'
+
         self.print_header = True
         self.lock.release()
