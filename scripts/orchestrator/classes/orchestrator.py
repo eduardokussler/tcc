@@ -24,7 +24,8 @@ class Orchestrator:
         NvidiaSmi.reset_frequencies()
         valid_frequency = True
         # Use name of script as output file
-        telemetry_thread = Telemetry(run_script.split('/').pop().split('.')[0])
+        telemetry_thread = Telemetry('telemetry_'+run_script.split('/').pop().split('.')[0])
+        telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
         telemetry_thread.start_telemetry_thread(measurements_interval)
 
 
@@ -32,6 +33,7 @@ class Orchestrator:
         while valid_frequency:
             subprocess.run(run_script, shell=True)
             valid_frequency = self.variator.variate_frequency_up('sm')
+            telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
 
         NvidiaSmi.reset_frequencies()
         valid_frequency = True
@@ -40,12 +42,11 @@ class Orchestrator:
         while valid_frequency:
             subprocess.run(run_script, shell=True)
             valid_frequency = valid_frequency = self.variator.variate_frequency_up('memory')
-        
+            telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies)
 
-        
+
         telemetry_thread.running = False
 
-        while not telemetry_thread.stopped:
-            time.sleep(1)
+        telemetry_thread.thread.join()
 
 
