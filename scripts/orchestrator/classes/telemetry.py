@@ -18,7 +18,7 @@ class Telemetry:
         Returns the thread for joining purposes
     '''
     def start_telemetry_thread(self, interval:float=1):
-        self.thread = Thread(target=self.get_telemetry_data, args=(interval,), daemon=True)
+        self.thread = Thread(target=self.get_telemetry_data, args=(interval,))
         self.thread.start()
     
     '''Runs a loop and gets the output of dmon from nvidia-smi
@@ -29,7 +29,7 @@ class Telemetry:
         while self.running:
             self.lock.acquire()
             command_output = NvidiaSmi.get_telemetry_data()
-            command_output = command_output.splitlines()
+            command_output = list(map(lambda line: line.strip(), command_output.splitlines()))
             if (self.print_header):
                 self.string_result += command_output[0] + '\n'
                 self.string_result += command_output[1] + '\n'
