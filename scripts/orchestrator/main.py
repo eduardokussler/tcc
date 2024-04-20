@@ -1,8 +1,24 @@
+import argparse
 from classes.orchestrator import Orchestrator
 from classes.utils import Platform
+import logging
 
-script = '../run/run_examiniMD.sh'
 
-orchestrator = Orchestrator(platform=Platform.GEFORCE, run_script=script)
+argparser = argparse.ArgumentParser(
+                    prog='Orchestrator',
+                    description='Runs a HPC Cuda program specified by `run_script` multiple times, variating GPU clocks and collecting the time spent and GPU telemtry')
 
-orchestrator.perform_experiment(0.1)
+argparser.add_argument('-r', '--run_script', action='store', dest='run_script', help='The bash script that runs the hpc program')
+argparser.add_argument('-p', '--platform', action='store', dest='platform', help='The target platform')
+argparser.add_argument('-i', '--interval', action='store', dest='interval', type=float, help='Measurements interval')
+
+args = argparser.parse_args()
+
+logging.info(f'''Running orchestrator with: 
+             run_script: {args.run_script},
+             platform={args.platform},
+             measurement interval = {args.interval}''')
+
+orchestrator = Orchestrator(platform=Platform.from_str(args.platform), run_script=args.run_script)
+
+orchestrator.perform_experiment(args.interval)
