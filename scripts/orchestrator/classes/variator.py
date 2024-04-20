@@ -13,7 +13,7 @@ class Variator:
         self.default_frequencies = {'memory': NvidiaSmi.get_default_frequency('memory', platform), 
                                     'sm': NvidiaSmi.get_default_frequency('sm', platform)}
         self.logger =  logging.getLogger(__name__)
-        NvidiaSmi.set_frequency(self.current_frequencies, self.platform)
+        NvidiaSmi.set_frequency(self.default_frequencies, self.platform)
     """ Type is: 'memory' or 'sm'
         Returns true if change was made and false if it was not possible
     """
@@ -28,3 +28,17 @@ class Variator:
         self.logger.info(f'Setting frequencies to: memory={frequencies["memory"]} and sm={frequencies["sm"]}')
         NvidiaSmi.set_frequency(frequencies, self.platform)
         return True
+    
+    ''' Reset frequencies to restart experiments on current_frequencies object'''
+    def reset_to_default_frequencies(self):
+        NvidiaSmi.set_frequency(self.default_frequencies, self.platform)
+        self.current_frequencies = {'memory': self.default_frequencies['memory'][0], 
+                                    'sm': self.default_frequencies['sm'][0]}
+
+    """ Set lowest possible frequency for frequency type"""
+    def set_lowest_frequency(self, type:str):
+        frequencies = {'memory': self.possible_frequencies['memory'][0] if type == 'memory' else self.current_frequencies['memory'], 
+                       'sm': self.possible_frequencies['sm'][0] if type == 'sm' else self.current_frequencies['sm']}
+        self.current_frequencies = frequencies
+        self.logger.info(f'Setting frequencies to: memory={frequencies["memory"]} and sm={frequencies["sm"]}')
+        NvidiaSmi.set_frequency(frequencies, self.platform)
