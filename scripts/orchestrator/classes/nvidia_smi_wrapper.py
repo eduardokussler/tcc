@@ -40,20 +40,19 @@ class NvidiaSmi():
     '''Set the specified frequencies on the gpu'''
     @staticmethod
     def set_frequency(frequency_mhz:dict, platform:Platform):
-        command = ''
-        if platform == Platform.ENTERPRISE:
-            command = f'nvidia-smi --applications-clocks={frequency_mhz["memory"]},{frequency_mhz["sm"]}'
-        else:
-            command = f'nvidia-smi --lock-gpu-clocks {frequency_mhz["sm"]},{frequency_mhz["sm"]}'
-        subprocess.run(command, shell=True)
+        command = {Platform.ENTERPRISE: f'nvidia-smi --applications-clocks={frequency_mhz["memory"]},{frequency_mhz["sm"]}',
+                   Platform.GEFORCE: f'nvidia-smi --lock-gpu-clocks {frequency_mhz["sm"]},{frequency_mhz["sm"]}',
+                   Platform.GPPD: f'gpu_control {frequency_mhz["memory"]},{frequency_mhz["sm"]}'
+                   }
+        
+        subprocess.run(command[platform], shell=True)
 
     @staticmethod
     def reset_frequencies(platform:Platform):
-        if platform == Platform.ENTERPRISE:
-            command = 'nvidia-smi --reset-applications-clocks'
-        else:
-            command = 'nvidia-smi --reset-gpu-clocks'
-        subprocess.run(command, shell=True, capture_output=True, text=True)
+        command = {Platform.ENTERPRISE: 'nvidia-smi --reset-applications-clocks',
+                   Platform.GPPD: 'nvidia-smi --reset-applications-clocks',
+                   Platform.GEFORCE: 'nvidia-smi --reset-gpu-clocks'}
+        subprocess.run(command[platform], shell=True, capture_output=True, text=True)
 
     
     '''Get gpu performance data
