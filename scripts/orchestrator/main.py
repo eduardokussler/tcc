@@ -8,13 +8,13 @@ argparser = argparse.ArgumentParser(
                     prog='Orchestrator',
                     description='Runs a HPC Cuda program specified by `run_script` multiple times, variating GPU clocks and collecting the time spent and GPU telemtry')
 
-argparser.add_argument('-r', '--run_script', action='store', dest='run_script', help='The bash script that runs the hpc program')
-argparser.add_argument('-p', '--platform', action='store', dest='platform', help='The target platform')
-argparser.add_argument('-i', '--interval', action='store', dest='interval', type=float, help='Measurements interval')
+argparser.add_argument('-r', '--run_script', action='store', dest='run_script', help='The bash script that runs the hpc program', required=True)
+argparser.add_argument('-p', '--platform', action='store', dest='platform', help='The target platform', required=True)
+argparser.add_argument('-i', '--interval', action='store', dest='interval', type=float, help='Measurements interval', required=True)
 
 args = argparser.parse_args()
-
-logging.info(f'''Running orchestrator with: 
+log = logging.Logger('main')
+log.info(f'''Running orchestrator with: 
              run_script: {args.run_script},
              platform={args.platform},
              measurement interval = {args.interval}''')

@@ -9,6 +9,7 @@
 '''
 import subprocess
 import time
+import logging
 from classes.variator import Variator
 from classes.utils import *
 from classes.nvidia_smi_wrapper import NvidiaSmi
@@ -24,6 +25,7 @@ class Orchestrator:
         self.platform = platform
         self.output_file = open('output_results_'+run_script.split('/').pop().split('.')[0], 'w+')
         self.run_script = run_script
+        self.log = logging.Logger('Orchestrator')
     
     def perform_experiment(self, measurements_interval:float=1):
         valid_frequency = True

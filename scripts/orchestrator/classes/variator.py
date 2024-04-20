@@ -1,3 +1,4 @@
+import logging
 from classes.nvidia_smi_wrapper import *
 from classes.utils import Platform
 
@@ -9,6 +10,7 @@ class Variator:
                                      'sm': NvidiaSmi.load_possible_frequecies_to_list('sm')}
         self.current_frequencies = {'memory': self.possible_frequencies['memory'][0], 
                                     'sm': self.possible_frequencies['sm'][0]}
+        self.log = logging.Logger('Variator')
         NvidiaSmi.set_frequency(self.current_frequencies, self.platform)
     """ Type is: 'memory' or 'sm'
         Returns true if change was made and false if it was not possible
