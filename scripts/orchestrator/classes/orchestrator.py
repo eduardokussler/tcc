@@ -37,7 +37,8 @@ class Orchestrator:
 
         '''Run experiment for all available sm frequencies'''
         while valid_frequency:
-            process_output = subprocess.run(f'time {self.run_script}; echo "finished"', shell=True, capture_output=True, text=True).stdout
+            process = subprocess.run(f'time {self.run_script}; echo "finished"', shell=True, capture_output=True, text=True)
+            process_output = process.stdout + '\n' + process.stderr
             self.output_file.write(process_output)
             valid_frequency = self.variator.variate_frequency_up('sm')
             telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
@@ -48,7 +49,8 @@ class Orchestrator:
 
             '''Run experiment for all available memory frequencies'''
             while valid_frequency:
-                process_output = subprocess.run(f'time {self.run_script}', shell=True, capture_output=True, text=True).stdout
+                process = subprocess.run(f'time {self.run_script}', shell=True, capture_output=True, text=True)
+                process_output = process.stdout + '\n' + process.stderr
                 self.output_file.write(process_output)
                 valid_frequency = valid_frequency = self.variator.variate_frequency_up('memory')
                 telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
