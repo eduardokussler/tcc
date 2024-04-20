@@ -10,8 +10,8 @@ class Variator:
                                      'sm': NvidiaSmi.load_possible_frequecies_to_list('sm')}
         self.current_frequencies = {'memory': self.possible_frequencies['memory'][0], 
                                     'sm': self.possible_frequencies['sm'][0]}
-        self.default_frequencies = {'memory': NvidiaSmi.get_current_frequency('memory'), 
-                                    'sm': NvidiaSmi.get_current_frequency('sm')}
+        self.default_frequencies = {'memory': NvidiaSmi.get_default_frequency('memory', platform), 
+                                    'sm': NvidiaSmi.get_default_frequency('sm', platform)}
         self.logger =  logging.getLogger(__name__)
         NvidiaSmi.set_frequency(self.current_frequencies, self.platform)
     """ Type is: 'memory' or 'sm'

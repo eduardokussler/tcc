@@ -38,13 +38,20 @@ class NvidiaSmi():
         result_list.sort()
         return result_list
     
-    '''Get the current frequency
-       Used after reseting frequencies to get default frequency
+    '''Get the default frequency for type
     '''
     @staticmethod
-    def get_current_frequency(frequency_type:str) -> int:
-        sm_clock_command = 'nvidia-smi --query-gpu=clocks.current.sm --format csv'
-        memory_clock_command = 'nvidia-smi --query-gpu=clocks.current.memory --format csv'
+    def get_default_frequency(frequency_type:str, platform:Platform) -> int:
+        sm_clock_command = ''
+        memory_clock_command = ''
+        if platform != Platform.GEFORCE:
+            sm_clock_command = 'nvidia-smi --query-gpu=clocks.default_applications.graphics --format csv'
+            memory_clock_command = 'nvidia-smi --query-gpu=clocks.default_applications.memory --format csv'
+        else:
+            NvidiaSmi.reset_frequencies(platform)
+            sm_clock_command = 'nvidia-smi --query-gpu=clocks.current.sm --format csv'
+            memory_clock_command = 'nvidia-smi --query-gpu=clocks.current.memory --format csv'
+
         csv_result = ''
         if frequency_type == 'sm':
             result = subprocess.run(sm_clock_command, capture_output=True, text=True, shell=True)
