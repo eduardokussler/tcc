@@ -3,6 +3,6 @@ from classes.utils import Platform
 
 script = '../run/run_examiniMD.sh'
 
-orchestrator = Orchestrator(platform=Platform.GEFORCE)
+orchestrator = Orchestrator(platform=Platform.GEFORCE, run_script=script)
 
-orchestrator.perform_experiment(script, 0.1)
+orchestrator.perform_experiment(0.1)
