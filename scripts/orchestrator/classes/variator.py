@@ -10,7 +10,7 @@ class Variator:
                                      'sm': NvidiaSmi.load_possible_frequecies_to_list('sm')}
         self.current_frequencies = {'memory': self.possible_frequencies['memory'][0], 
                                     'sm': self.possible_frequencies['sm'][0]}
-        self.log = logging.Logger('Variator')
+        self.logger =  logging.getLogger(__name__)
         NvidiaSmi.set_frequency(self.current_frequencies, self.platform)
     """ Type is: 'memory' or 'sm'
         Returns true if change was made and false if it was not possible
@@ -21,5 +21,6 @@ class Variator:
         if current_frequency_index + step >= len(self.possible_frequencies[type]):
             return False 
         self.current_frequencies[type] = self.possible_frequencies[type][current_frequency_index+step]
+        self.logger.info(f'Setting frequencies to: memory={self.current_frequencies["memory"]} and sm={self.current_frequencies["sm"]}')
         NvidiaSmi.set_frequency(self.current_frequencies, self.platform)
         return True

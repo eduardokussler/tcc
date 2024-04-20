@@ -25,7 +25,7 @@ class Orchestrator:
         self.platform = platform
         self.output_file = open('output_results_'+run_script.split('/').pop().split('.')[0], 'w+')
         self.run_script = run_script
-        self.log = logging.Logger('Orchestrator')
+        self.logger =  logging.getLogger(__name__)
     
     def perform_experiment(self, measurements_interval:float=1):
         valid_frequency = True
@@ -37,19 +37,19 @@ class Orchestrator:
 
         '''Run experiment for all available sm frequencies'''
         while valid_frequency:
-            process = subprocess.run(f'time {self.run_script}; echo "finished"', shell=True, capture_output=True, text=True)
-            process_output = process.stdout + '\n' + process.stderr
+            process = subprocess.run(f'time -f "user %U \nsystem %S \nelapsed %E" {self.run_script};', shell=True, capture_output=True, text=True)
+            process_output = process.stdout + '\n \n \n' + process.stderr
             self.output_file.write(process_output)
             valid_frequency = self.variator.variate_frequency_up('sm')
             telemetry_thread.write_new_current_frequencies(self.variator.current_frequencies, self.platform)
 
-        if self.platform == Platform.ENTERPRISE:
+        if self.platform != Platform.GEFORCE:
             NvidiaSmi.reset_frequencies()
             valid_frequency = True
 
             '''Run experiment for all available memory frequencies'''
             while valid_frequency:
-                process = subprocess.run(f'time {self.run_script}', shell=True, capture_output=True, text=True)
+                process = subprocess.run(f'time -f "user %U \nsystem %S \nelapsed %E" {self.run_script}', shell=True, capture_output=True, text=True)
                 process_output = process.stdout + '\n' + process.stderr
                 self.output_file.write(process_output)
                 valid_frequency = valid_frequency = self.variator.variate_frequency_up('memory')

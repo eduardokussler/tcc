@@ -13,8 +13,9 @@ argparser.add_argument('-p', '--platform', action='store', dest='platform', help
 argparser.add_argument('-i', '--interval', action='store', dest='interval', type=float, help='Measurements interval', required=True)
 
 args = argparser.parse_args()
-log = logging.Logger('main')
-log.info(f'''Running orchestrator with: 
+logging.basicConfig(level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S', format='%(asctime)s %(pathname)s:%(lineno)s %(message)s:')
+logger = logging.getLogger(__name__)
+logger.info(f'''Running orchestrator with: 
              run_script: {args.run_script},
              platform={args.platform},
              measurement interval = {args.interval}''')

@@ -44,7 +44,6 @@ class NvidiaSmi():
                    Platform.GEFORCE: f'nvidia-smi --lock-gpu-clocks {frequency_mhz["sm"]},{frequency_mhz["sm"]}',
                    Platform.GPPD: f'gpu_control {frequency_mhz["memory"]},{frequency_mhz["sm"]}'
                    }
-        
         subprocess.run(command[platform], shell=True)
 
     @staticmethod
