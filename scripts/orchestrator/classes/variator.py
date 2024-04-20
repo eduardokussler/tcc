@@ -32,8 +32,8 @@ class Variator:
     ''' Reset frequencies to restart experiments on current_frequencies object'''
     def reset_to_default_frequencies(self):
         NvidiaSmi.set_frequency(self.default_frequencies, self.platform)
-        self.current_frequencies = {'memory': self.default_frequencies['memory'][0], 
-                                    'sm': self.default_frequencies['sm'][0]}
+        self.current_frequencies = {'memory': self.default_frequencies['memory'], 
+                                    'sm': self.default_frequencies['sm']}
 
     """ Set lowest possible frequency for frequency type"""
     def set_lowest_frequency(self, type:str):
