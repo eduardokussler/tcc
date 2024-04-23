@@ -1,5 +1,7 @@
 #!/bin/bash
 
-cp ../../scripts/Makefile_quicksilver ./src/Makefile
+cp ../../scripts/build/Makefile_quicksilver ./src/Makefile
+
+cd src
 
 make
