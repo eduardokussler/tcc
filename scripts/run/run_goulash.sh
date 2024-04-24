@@ -13,7 +13,7 @@ if [ -z $iterations ]; then
 fi
 
 if [ -z $gbs ]; then
-    gbs=8
+    gbs=3
 fi
 
 goulash_home=`pwd`
