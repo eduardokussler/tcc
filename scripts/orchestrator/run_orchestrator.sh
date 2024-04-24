@@ -1,6 +1,6 @@
 PREFIX="../run/"
-SCRIPTS=(run_examiniMD.sh run_quicksilver.sh)
-INTERVALS=(0.1              1)
+SCRIPTS=(run_examiniMD.sh run_quicksilver.sh run_goulash)
+INTERVALS=(0.1              1                1)
 
 PLATFORM=$1
 
