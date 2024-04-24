@@ -7,7 +7,7 @@ tests=("rush_larsen_gpu_cuda" "rush_larsen_gpu_lambda_cuda")
 iterations=$1 #self explanatory
 gbs=$2 #gb used by kernel
 if [ -z $iterations ]; then
-    iterations=100000
+    iterations=1000
 fi
 
 if [ -z $gbs ]; then
@@ -19,6 +19,7 @@ goulash_home=`pwd`
 for test in ${tests[@]}; do
     echo $test
     cd tests/rush_larsen/$test
+    make clean
     make
     ./$test  $iterations  $gbs
     cd $goulash_home
