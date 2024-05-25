@@ -10,5 +10,4 @@ for test in ${TESTS[@]}
 do
     echo "running test $test"
     $EXECUTABLE -lfile $INPUT_PREFIX$test -nrun 10
-    cd ..
 done
