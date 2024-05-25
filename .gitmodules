@@ -37,3 +37,6 @@
 [submodule "projetos/LULESH"]
 	path = projetos/LULESH
 	url = https://github.com/LLNL/LULESH.git
+[submodule "projetos/hypar"]
+	path = projetos/hypar
+	url = https://github.com/debog/hypar.git
