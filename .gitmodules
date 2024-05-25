@@ -16,9 +16,6 @@
 [submodule "projetos/IAMR"]
 	path = projetos/IAMR
 	url = https://github.com/AMReX-Fluids/IAMR.git
-[submodule "projetos/hypar"]
-	path = projetos/hypar
-	url = https://bitbucket.org/deboghosh/hypar/
 [submodule "projetos/dependencies/kokkos"]
 	path = projetos/dependencies/kokkos
 	url = https://github.com/kokkos/kokkos.git
