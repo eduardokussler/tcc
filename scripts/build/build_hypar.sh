@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir install
 autoreconf -i
-./configure --prefix=`pwd`/install --enable-cuda --with-mpi-dir=/home/eekussler/nvhpc_2023_235_Linux_x86_64_cuda_multi/install_components/Linux_x86_64/23.5/comm_libs/11.8/hpcx/hpcx-2.14/ompi
+./configure --prefix=`pwd`/install --enable-cuda --enable-serial --with-cuda-dir=/usr/local/cuda-11.7/targets/x86_64-linux/ #--with-mpi-dir=/home/eekussler/nvhpc_2023_235_Linux_x86_64_cuda_multi/install_components/Linux_x86_64/23.5/comm_libs/11.8/hpcx/hpcx-2.14/ompi
 make
 make check
 make install
