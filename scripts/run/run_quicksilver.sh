@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+# Alter /Examples/AllEscape/allEscape.inp
+# nParticles: 900000
+#  nSteps: 2000
 cd ../../projetos/Quicksilver/src
 
 
