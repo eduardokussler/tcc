@@ -1,6 +1,6 @@
 PREFIX="../run/"
-SCRIPTS=(run_examiniMD.sh   run_quicksilver.sh run_goulash run_hypar run_iamr run_miniMDock run_kripke)
-INTERVALS=(0.1              1                  1           1         1        1             1)
+SCRIPTS=(run_examiniMD.sh  run_quicksilver.sh run_goulash.sh run_hypar.sh run_iamr.sh run_miniMDock.sh run_kripke.sh)
+INTERVALS=(0.1             1                  1              1            1           1                1)
 PLATFORM_PARAM=$1
 PLATFORM=$PLATFORM_PARAM
 if [ $PLATFORM = "eekussler_laptop" ]; then

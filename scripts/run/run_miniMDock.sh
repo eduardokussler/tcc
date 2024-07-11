@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 INPUT_PREFIX=./input/
