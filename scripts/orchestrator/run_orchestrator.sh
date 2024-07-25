@@ -18,7 +18,7 @@ for SCRIPT in ${SCRIPTS[@]}
 do
     #echo ${INTERVALS[$INDEX]}
     # This test uses too much memory and doesn't run on my laptop
-    if [ $PLATFORM_PARAM = "eekussler_laptop" ] && [ $SCRIPT = "run_hypar" ]; then
+    if [ $PLATFORM_PARAM = "eekussler_laptop" ] && [ $SCRIPT = "run_hypar.sh" ]; then
         echo "$SCRIPT is not supported in this platform ($PLATFORM_PARAM)."
         INDEX=$((INDEX+1))
         continue
