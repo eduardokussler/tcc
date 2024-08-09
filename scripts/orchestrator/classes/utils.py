@@ -5,6 +5,7 @@ class Platform(Enum):
     GEFORCE = 1
     ENTERPRISE = 2
     GPPD = 3
+    GEFORCE_GPPD = 4
 
     @staticmethod
     def from_str(label:str):
@@ -15,6 +16,8 @@ class Platform(Enum):
             return Platform.ENTERPRISE
         elif label == 'GPPD':
             return Platform.GPPD
+        elif label == 'GEFORCE_GPPD':
+            return Platform.GEFORCE_GPPD
         else:
             raise NotImplementedError
     

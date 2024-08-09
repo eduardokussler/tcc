@@ -8,7 +8,7 @@ if [ $PLATFORM = "eekussler_laptop" ]; then
 fi
 
 if [ -z $PLATFORM ]; then
-    echo "The platform is required! Options are [geforce, gppd, enterprise, eekussler_laptop]";
+    echo "The platform is required! Options are [geforce, gppd, geforce_gppd, enterprise, eekussler_laptop]";
     exit 1
 fi
 
