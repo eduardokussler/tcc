@@ -26,13 +26,17 @@ telemetry_list: list[Telemetry] = []
 with open(data_file, 'r') as data:
     lines = data.readlines()
     for line in lines:
+        # Parse from file can return empty line for unused frequency on the first reading
         telemetry:Telemetry = Telemetry.parse_from_file(line)
         if telemetry is not None:
             if telemetry.dict_index not in telemetry_data:
                 telemetry_data[telemetry.dict_index] = []
             telemetry_data[telemetry.dict_index].append(telemetry)
             telemetry_list.append(telemetry)
-    
+
+# cleaning unwanted value for unused frequency or when application already stopped using the gpu[
+for key, tel_list in telemetry_data.items():
+    telemetry_data[key] = list(filter(lambda tel: tel.sm_usage > 0, tel_list))
 # for key, values in telemetry_data.items():
 #     print(key)
 #     for value in values:
