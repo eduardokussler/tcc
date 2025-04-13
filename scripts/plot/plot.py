@@ -1,6 +1,9 @@
 import seaborn
 import sys
+import pandas
+import dataclasses
 from classes.telemetry_model import Telemetry
+
 
 
 '''Usage: python3 plot.py <telemetry_file>'''
@@ -14,6 +17,8 @@ data_file = sys.argv[1]
 
 #key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
 telemetry_data: dict[str, list] = dict()
+# Telemetry class instances list read from file in sequence
+telemetry_list: list[Telemetry] = []
 
 with open(data_file, 'r') as data:
     lines = data.readlines()
@@ -23,8 +28,17 @@ with open(data_file, 'r') as data:
             if telemetry.dict_index not in telemetry_data:
                 telemetry_data[telemetry.dict_index] = []
             telemetry_data[telemetry.dict_index].append(telemetry)
+            telemetry_list.append(telemetry)
     
-for key, values in telemetry_data.items():
-    print(key)
-    for value in values:
-        print(values, sep="\n",end="\n \n \n")
+# for key, values in telemetry_data.items():
+#     print(key)
+#     for value in values:
+#         print(values, sep="\n",end="\n \n \n")
+
+
+
+print([field.name for field in dataclasses.fields(Telemetry)])
+plot_data = pandas.DataFrame(telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)])
+axes = seaborn.lineplot(plot_data, x="sm_clock", y="power")
+figure = axes.get_figure()
+figure.savefig("out.png") 
