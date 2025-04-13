@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+@dataclass
 class Telemetry():
     timestamp: str
     gpu_idx: int  
@@ -17,7 +18,6 @@ class Telemetry():
 
     @staticmethod
     def parse_from_file(line: str):
-        
         split_line = line.split(' ')
         split_line = list(filter(lambda val: val != '', split_line))
         if len(split_line) <= 2: # header saying the sm frequency
@@ -26,19 +26,19 @@ class Telemetry():
             return
         split_line = list(map(lambda val: val if val != '-' else 0, split_line))
 
-        telemetry = Telemetry()
-        telemetry.timestamp = split_line[0]
-        telemetry.gpu_idx = int(split_line[1])
-        telemetry.power = int(split_line[2])
-        telemetry.gpu_temp = int(split_line[3])
-        telemetry.mem_temp = int(split_line[4])
-        telemetry.sm_usage = int(split_line[5])
-        telemetry.mem_usage = int(split_line[6])
-        telemetry.encoder_usage = int(split_line[7])
-        telemetry.decoder_usage = int(split_line[8])
-        telemetry.mem_clock = int(split_line[9])
-        telemetry.sm_clock = int(split_line[10])
-        telemetry.dict_index = str(telemetry.sm_clock) + '_' + str(telemetry.mem_clock)
+        timestamp = split_line[0]
+        gpu_idx = int(split_line[1])
+        power = int(split_line[2])
+        gpu_temp = int(split_line[3])
+        mem_temp = int(split_line[4])
+        sm_usage = int(split_line[5])
+        mem_usage = int(split_line[6])
+        encoder_usage = int(split_line[7])
+        decoder_usage = int(split_line[8])
+        mem_clock = int(split_line[9])
+        sm_clock = int(split_line[10])
+        dict_index = str(sm_clock) + '_' + str(mem_clock)
+        telemetry = Telemetry(timestamp, gpu_idx, power, gpu_temp, mem_temp, sm_usage, mem_usage, encoder_usage, decoder_usage, mem_clock, sm_clock, dict_index)
         return telemetry
 
 
