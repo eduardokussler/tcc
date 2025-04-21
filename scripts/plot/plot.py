@@ -1,8 +1,8 @@
 import seaborn
-import matplotlib.pyplot as plt
 import sys
 import pandas
 import dataclasses
+import matplotlib.pyplot as plt
 from classes.telemetry_model import Telemetry
 from datetime import datetime, timedelta
 
@@ -12,7 +12,7 @@ FMT = "%H:%M:%S"
 # Don't use scientific notation on pandas.
 pandas.options.display.float_format = "{:,.3f}".format
 
-
+seaborn.set_theme()
 """Usage: python3 plot.py <telemetry_file>"""
 # print(sys.argv)
 data_file = sys.argv[1]
@@ -104,8 +104,10 @@ for key in total_power_data.loc[:, "sm_clock"]:
     print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
 print(total_power_data)
-# not looking good at the moment
-axes = seaborn.lineplot(total_power_data, x="sm_clock", y="total power", errorbar=None)
+plt.figure(figsize=(16, 8))
+axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
+axes.tick_params(axis="x", labelrotation=45)
+axes.xaxis.tick_bottom()
 figure = axes.get_figure()
 figure.savefig("total_power_per_config.png")
 plt.clf()
@@ -114,4 +116,4 @@ plt.clf()
 # graph the total time took for each config
 
 # graph all times of all apps on the same figure
-#  
+#
