@@ -59,18 +59,20 @@ figure.savefig("sm_clock_to_power.png")
 
 # key: str(sm frequency) + '_' str(mem frequency) -> (start_time, end_time)
 time_of_start_and_end: dict[str, tuple] = dict()
-#key: str(sm frequency) + '_' str(mem frequency) -> dict('total power', watts)
-total_power_data: dict[str, dict[str, int]] = dict()
+total_power_data: pandas.DataFrame = pandas.DataFrame(columns=["sm_clock", "total power"], data=None)
 #key: str(sm frequency) + '_' str(mem frequency) -> number of observations
 total_obeservations: dict[str, int] = dict()
 
 for key, telemetry_listing in telemetry_data.items():
     for telemetry in telemetry_listing:
-        if key not in total_power_data:
-            total_power_data[key] = dict()
-            total_power_data[key]["total_power"] = 0
+        mask = total_power_data['sm_clock'] == key
+        if len(total_power_data[mask]) == 0:
+            total_power_data.loc[len(total_power_data)] = [key, 0]
+        if key not in total_obeservations:
             total_obeservations[key] = 0
-        total_power_data[key]["total_power"] += telemetry.power
+        # recalculate mask for altered dataframe
+        mask = total_power_data['sm_clock'] == key
+        total_power_data.loc[mask, 'total power'] += telemetry.power
         total_obeservations[key] += 1
         timestamp = datetime.strptime(telemetry.timestamp, FMT)
         if key not in time_of_start_and_end:
@@ -82,15 +84,15 @@ print(f'Start and endTime {time_of_start_and_end}')
 # Because the collecting of each data point was not the same across all applications, 
 # Take the average from the power measured over the number of observations
 # Multiply by the total time took (in seconds)
-for key in total_power_data.keys():
+for key in total_power_data.loc[:, "sm_clock"]:
+    mask = total_power_data["sm_clock"] == key
     total_time_took:timedelta = time_of_start_and_end[key][1] - time_of_start_and_end[key][0]
     print(f'Seconds took {total_time_took.total_seconds()}')
-    total_power_data[key]["total_power"] = (total_power_data[key]["total_power"]/total_obeservations[key]) * total_time_took.total_seconds()
-    print(f'Total power consumed: {total_power_data[key]["total_power"]}')
+    total_power_data.loc[mask, 'total power'] = (total_power_data.loc[mask, 'total power']/total_obeservations[key]) * total_time_took.total_seconds()
+    print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
-total_power_data = pandas.DataFrame(total_power_data.values(), columns=["total_power"], dtype=float)
 print(total_power_data)
 # not looking good at the moment
-axes = seaborn.lineplot(total_power_data, x=total_power_data.index, y="total_power", errorbar=None)
+axes = seaborn.lineplot(total_power_data, x="sm_clock", y="total power", errorbar=None)
 figure = axes.get_figure()
 figure.savefig("total_power_per_config.png") 
