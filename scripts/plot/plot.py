@@ -56,19 +56,21 @@ figure.savefig("sm_clock_to_power.png")
 # process time spent on each clock configuration
 # calculate the total power spent to finish processing
 
+
 # key: str(sm frequency) + '_' str(mem frequency) -> (start_time, end_time)
 time_of_start_and_end: dict[str, tuple] = dict()
-#key: str(sm frequency) + '_' str(mem frequency) -> total power
-total_power_data: dict[str, int] = dict()
+#key: str(sm frequency) + '_' str(mem frequency) -> dict('total power', watts)
+total_power_data: dict[str, dict[str, int]] = dict()
 #key: str(sm frequency) + '_' str(mem frequency) -> number of observations
 total_obeservations: dict[str, int] = dict()
 
 for key, telemetry_listing in telemetry_data.items():
     for telemetry in telemetry_listing:
         if key not in total_power_data:
-            total_power_data[key] = 0
+            total_power_data[key] = dict()
+            total_power_data[key]["total_power"] = 0
             total_obeservations[key] = 0
-        total_power_data[key] += telemetry.power
+        total_power_data[key]["total_power"] += telemetry.power
         total_obeservations[key] += 1
         timestamp = datetime.strptime(telemetry.timestamp, FMT)
         if key not in time_of_start_and_end:
@@ -83,13 +85,12 @@ print(f'Start and endTime {time_of_start_and_end}')
 for key in total_power_data.keys():
     total_time_took:timedelta = time_of_start_and_end[key][1] - time_of_start_and_end[key][0]
     print(f'Seconds took {total_time_took.total_seconds()}')
-    total_power_data[key] = (total_power_data[key]/total_obeservations[key]) * total_time_took.total_seconds()
-    print(f'Total power consumed: {total_power_data[key]}')
+    total_power_data[key]["total_power"] = (total_power_data[key]["total_power"]/total_obeservations[key]) * total_time_took.total_seconds()
+    print(f'Total power consumed: {total_power_data[key]["total_power"]}')
 
-total_power_data = pandas.DataFrame(total_power_data.values(), index=total_power_data.keys(), dtype=float)
+total_power_data = pandas.DataFrame(total_power_data.values(), columns=["total_power"], dtype=float)
 print(total_power_data)
 # not looking good at the moment
-axes = seaborn.lineplot(total_power_data, x=total_power_data.index, y=0)
+axes = seaborn.lineplot(total_power_data, x=total_power_data.index, y="total_power", errorbar=None)
 figure = axes.get_figure()
 figure.savefig("total_power_per_config.png") 
-
