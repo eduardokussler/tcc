@@ -37,7 +37,8 @@ with open(data_file, 'r') as data:
             telemetry_data[telemetry.dict_index].append(telemetry)
             telemetry_list.append(telemetry)
 
-# cleaning unwanted value for unused frequency or when application already stopped using the gpu[
+# cleaning unwanted value for unused frequency or when application already stopped using the gpu
+telemetry_list = list(filter(lambda tel: tel.sm_usage > 0, telemetry_list))
 for key, tel_list in telemetry_data.items():
     telemetry_data[key] = list(filter(lambda tel: tel.sm_usage > 0, tel_list))
 # for key, values in telemetry_data.items():
