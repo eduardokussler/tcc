@@ -1,4 +1,5 @@
 import seaborn
+import matplotlib.pyplot as plt
 import sys
 import pandas
 import dataclasses
@@ -54,7 +55,7 @@ print(plot_data)
 axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
 figure = axes.get_figure()
 figure.savefig("sm_clock_to_power.png")
-
+plt.clf()
 # process time spent on each clock configuration
 # calculate the total power spent to finish processing
 
@@ -107,3 +108,10 @@ print(total_power_data)
 axes = seaborn.lineplot(total_power_data, x="sm_clock", y="total power", errorbar=None)
 figure = axes.get_figure()
 figure.savefig("total_power_per_config.png")
+plt.clf()
+
+
+# graph the total time took for each config
+
+# graph all times of all apps on the same figure
+#  
