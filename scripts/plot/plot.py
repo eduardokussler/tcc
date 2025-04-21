@@ -6,31 +6,31 @@ from classes.telemetry_model import Telemetry
 from datetime import datetime, timedelta
 
 # specifyu the time format used on the measurements
-FMT = '%H:%M:%S'
+FMT = "%H:%M:%S"
 
 # Don't use scientific notation on pandas.
-pandas.options.display.float_format = '{:,.3f}'.format
+pandas.options.display.float_format = "{:,.3f}".format
 
 
-'''Usage: python3 plot.py <telemetry_file>'''
-#print(sys.argv)
+"""Usage: python3 plot.py <telemetry_file>"""
+# print(sys.argv)
 data_file = sys.argv[1]
 
-'''File has the following structure:
+"""File has the following structure:
     #Time        gpu   pwr gtemp mtemp    sm   mem   enc   dec  mclk  pclk
     #HH:MM:SS    Idx     W     C     C     %     %     %     %   MHz   MHz
-'''
+"""
 
-#key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
+# key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
 telemetry_data: dict[str, list] = dict()
 # Telemetry class instances list read from file in sequence
 telemetry_list: list[Telemetry] = []
 
-with open(data_file, 'r') as data:
+with open(data_file, "r") as data:
     lines = data.readlines()
     for line in lines:
         # Parse from file can return empty line for unused frequency on the first reading
-        telemetry:Telemetry = Telemetry.parse_from_file(line)
+        telemetry: Telemetry = Telemetry.parse_from_file(line)
         if telemetry is not None:
             if telemetry.dict_index not in telemetry_data:
                 telemetry_data[telemetry.dict_index] = []
@@ -47,11 +47,13 @@ for key, tel_list in telemetry_data.items():
 #         print(values, sep="\n",end="\n \n \n")
 
 
-
-plot_data = pandas.DataFrame(telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)])
+plot_data = pandas.DataFrame(
+    telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)]
+)
+print(plot_data)
 axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
 figure = axes.get_figure()
-figure.savefig("sm_clock_to_power.png") 
+figure.savefig("sm_clock_to_power.png")
 
 # process time spent on each clock configuration
 # calculate the total power spent to finish processing
@@ -59,40 +61,49 @@ figure.savefig("sm_clock_to_power.png")
 
 # key: str(sm frequency) + '_' str(mem frequency) -> (start_time, end_time)
 time_of_start_and_end: dict[str, tuple] = dict()
-total_power_data: pandas.DataFrame = pandas.DataFrame(columns=["sm_clock", "total power"], data=None)
-#key: str(sm frequency) + '_' str(mem frequency) -> number of observations
+total_power_data: pandas.DataFrame = pandas.DataFrame(
+    columns=["sm_clock", "total power"], data=None
+)
+# key: str(sm frequency) + '_' str(mem frequency) -> number of observations
 total_obeservations: dict[str, int] = dict()
 
 for key, telemetry_listing in telemetry_data.items():
     for telemetry in telemetry_listing:
-        mask = total_power_data['sm_clock'] == key
+        mask = total_power_data["sm_clock"] == key
         if len(total_power_data[mask]) == 0:
-            total_power_data.loc[len(total_power_data)] = [key, 0]
+            total_power_data.loc[len(total_power_data)] = [key, 0.0]
         if key not in total_obeservations:
             total_obeservations[key] = 0
         # recalculate mask for altered dataframe
-        mask = total_power_data['sm_clock'] == key
-        total_power_data.loc[mask, 'total power'] += telemetry.power
+        mask = total_power_data["sm_clock"] == key
+        total_power_data.loc[mask, "total power"] += telemetry.power
         total_obeservations[key] += 1
         timestamp = datetime.strptime(telemetry.timestamp, FMT)
         if key not in time_of_start_and_end:
             time_of_start_and_end[key] = (timestamp, timestamp)
         else:
             current_data = time_of_start_and_end[key]
-            time_of_start_and_end[key] = (min(timestamp, current_data[0]), max(timestamp, current_data[1]))
-print(f'Start and endTime {time_of_start_and_end}')
-# Because the collecting of each data point was not the same across all applications, 
+            time_of_start_and_end[key] = (
+                min(timestamp, current_data[0]),
+                max(timestamp, current_data[1]),
+            )
+print(f"Start and endTime {time_of_start_and_end}")
+# Because the collecting of each data point was not the same across all applications,
 # Take the average from the power measured over the number of observations
 # Multiply by the total time took (in seconds)
 for key in total_power_data.loc[:, "sm_clock"]:
     mask = total_power_data["sm_clock"] == key
-    total_time_took:timedelta = time_of_start_and_end[key][1] - time_of_start_and_end[key][0]
-    print(f'Seconds took {total_time_took.total_seconds()}')
-    total_power_data.loc[mask, 'total power'] = (total_power_data.loc[mask, 'total power']/total_obeservations[key]) * total_time_took.total_seconds()
+    total_time_took: timedelta = (
+        time_of_start_and_end[key][1] - time_of_start_and_end[key][0]
+    )
+    print(f"Seconds took {total_time_took.total_seconds()}")
+    total_power_data.loc[mask, "total power"] = (
+        total_power_data.loc[mask, "total power"] / total_obeservations[key]
+    ) * total_time_took.total_seconds()
     print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
 print(total_power_data)
 # not looking good at the moment
 axes = seaborn.lineplot(total_power_data, x="sm_clock", y="total power", errorbar=None)
 figure = axes.get_figure()
-figure.savefig("total_power_per_config.png") 
+figure.savefig("total_power_per_config.png")
