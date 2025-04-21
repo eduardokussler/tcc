@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 # specifyu the time format used on the measurements
 FMT = '%H:%M:%S'
 
+# Don't use scientific notation on pandas.
+pandas.options.display.float_format = '{:,.3f}'.format
+
 
 '''Usage: python3 plot.py <telemetry_file>'''
 #print(sys.argv)
@@ -45,7 +48,7 @@ for key, tel_list in telemetry_data.items():
 
 
 plot_data = pandas.DataFrame(telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)])
-axes = seaborn.lineplot(plot_data, x="sm_clock", y="power")
+axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
 figure = axes.get_figure()
 figure.savefig("sm_clock_to_power.png") 
 
@@ -80,9 +83,10 @@ for key in total_power_data.keys():
     total_time_took:timedelta = time_of_start_and_end[key][1] - time_of_start_and_end[key][0]
     print(f'Seconds took {total_time_took.total_seconds()}')
     total_power_data[key] = (total_power_data[key]/total_obeservations[key]) * total_time_took.total_seconds()
+    print(f'Total power consumed: {total_power_data[key]}')
 
+total_power_data = pandas.DataFrame(total_power_data.values(), index=total_power_data.keys(), dtype=float)
 print(total_power_data)
-total_power_data = pandas.DataFrame(total_power_data.values(), index=[key for key in total_power_data.keys()])
 # not looking good at the moment
 axes = seaborn.lineplot(total_power_data, x=total_power_data.index, y=0)
 figure = axes.get_figure()
