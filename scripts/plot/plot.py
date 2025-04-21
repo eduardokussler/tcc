@@ -64,7 +64,7 @@ plt.clf()
 # key: str(sm frequency) + '_' str(mem frequency) -> (start_time, end_time)
 time_of_start_and_end: dict[str, tuple] = dict()
 total_power_data: pandas.DataFrame = pandas.DataFrame(
-    columns=["sm_clock", "total power"], data=None
+    columns=["sm_clock", "total power", "total time"], data=None
 )
 # key: str(sm frequency) + '_' str(mem frequency) -> number of observations
 total_obeservations: dict[str, int] = dict()
@@ -73,7 +73,7 @@ for key, telemetry_listing in telemetry_data.items():
     for telemetry in telemetry_listing:
         mask = total_power_data["sm_clock"] == key
         if len(total_power_data[mask]) == 0:
-            total_power_data.loc[len(total_power_data)] = [key, 0.0]
+            total_power_data.loc[len(total_power_data)] = [key, 0.0, None]
         if key not in total_obeservations:
             total_obeservations[key] = 0
         # recalculate mask for altered dataframe
@@ -102,6 +102,7 @@ for key in total_power_data.loc[:, "sm_clock"]:
     total_power_data.loc[mask, "total power"] = (
         total_power_data.loc[mask, "total power"] / total_obeservations[key]
     ) * total_time_took.total_seconds()
+    total_power_data.loc[mask, "total time"] = total_time_took.total_seconds()
     print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
 print(total_power_data)
@@ -116,6 +117,15 @@ plt.clf()
 
 
 # graph the total time took for each config
+axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
+axes.set_title("Total time taken each clock configuration")
+axes.tick_params(axis="x", labelrotation=45)
+axes.xaxis.tick_bottom()
+figure = axes.get_figure()
+figure.savefig("total_time_per_config.png")
+plt.clf()
+
+
 
 # graph all times of all apps on the same figure
 #
