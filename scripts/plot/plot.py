@@ -54,6 +54,7 @@ for data_file_path in data_files:
     print(plot_data)
     axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
     axes.set_title("Power needed to operate at each configuration")
+    axes.ticklabel_format(style="plain")
     figure = axes.get_figure()
     figure.savefig(f"sm_clock_to_power_{data_file_name}.png")
     plt.clf()
@@ -108,6 +109,7 @@ for data_file_path in data_files:
     plt.figure(figsize=(16, 8))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     axes.set_title("Total power consumed for each clock configuration")
+    axes.ticklabel_format(style="plain", axis="y")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
@@ -117,6 +119,7 @@ for data_file_path in data_files:
     # graph the total time took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     axes.set_title("Total time taken each clock configuration")
+    axes.ticklabel_format(style="plain", axis="y")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
