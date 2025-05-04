@@ -55,7 +55,8 @@ for data_file_path in data_files:
     plot_data = pandas.DataFrame(
         telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)]
     )
-    print(plot_data)
+    mask = plot_data["sm_clock"] == 2550
+    print(plot_data.loc[mask])
     axes = seaborn.lineplot(
         plot_data,
         x="sm_clock",
@@ -123,13 +124,13 @@ for data_file_path in data_files:
         print(f"Seconds took {total_time_took.total_seconds()}")
         total_power_data.loc[mask, "total power"] = (
             total_power_data.loc[mask, "total power"] / total_obeservations[key]
-        ) * total_time_took.total_seconds()
-        total_power_data.loc[mask, "total time"] = total_time_took.total_seconds()
+        ) * max(total_time_took.total_seconds(), 1)
+        total_power_data.loc[mask, "total time"] = max(total_time_took.total_seconds(), 1)
         print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     print(total_power_data)
-    plt.figure(figsize=(16, 8))
+    plt.figure(figsize=(19.2, 10.8))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
@@ -183,3 +184,6 @@ axes.xaxis.tick_bottom()
 plt.legend(title="Proxy app")
 figure = axes.get_figure()
 figure.savefig(f"total_power_per_config_all_apps.png")
+
+
+#Plot memory usage and SM usage to see if it hit a bottleneck
