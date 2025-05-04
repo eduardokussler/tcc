@@ -53,10 +53,10 @@ for data_file_path in data_files:
     )
     print(plot_data)
     axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
-    #axes.set_title("Power needed to operate at each configuration")
+    # axes.set_title("Power needed to operate at each configuration")
     axes.set_title("Potência necessária para a GPU operar em cada frequência")
     axes.ticklabel_format(style="plain")
-    axes.set(xlabel='Sm_clock (MHz)', ylabel="Potência (Watts)")
+    axes.set(xlabel="Sm_clock (MHz)", ylabel="Potência (Watts)")
     figure = axes.get_figure()
     figure.savefig(f"sm_clock_to_power_{data_file_name}.png")
     plt.clf()
@@ -105,14 +105,16 @@ for data_file_path in data_files:
             total_power_data.loc[mask, "total power"] / total_obeservations[key]
         ) * total_time_took.total_seconds()
         total_power_data.loc[mask, "total time ()"] = total_time_took.total_seconds()
-        print(f"Total power (Watts) consumed: {total_power_data.loc[mask, 'Total power (Watts)']}")
+        print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
     print(total_power_data)
     plt.figure(figsize=(16, 8))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
-    #axes.set_title("Total power (Watts) consumed for each clock configuration")
-    axes.set_title("Potência total consumida para rodar o proxy app em cada configuração")
-    axes.set(xlabel='Sm_clock (MHz)', ylabel="Potência total(Watts)")
+    # axes.set_title("Total power (Watts) consumed for each clock configuration")
+    axes.set_title(
+        "Potência total consumida para rodar o proxy app em cada configuração"
+    )
+    axes.set(xlabel="Sm_clock (MHz)", ylabel="Potência total(Watts)")
     axes.ticklabel_format(style="plain", axis="y")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
@@ -122,10 +124,10 @@ for data_file_path in data_files:
 
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
-    #axes.set_title("Total time () taken each clock configuration")
+    # axes.set_title("Total time () taken each clock configuration")
     axes.set_title("Tempo total para rodar o proxy app")
     axes.ticklabel_format(style="plain", axis="y")
-    axes.set(xlabel='Sm_clock (MHz)', ylabel="Tempo total (Segundos)")
+    axes.set(xlabel="Sm_clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
