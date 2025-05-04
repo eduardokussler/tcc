@@ -26,6 +26,10 @@ data_files = sys.argv[1:]
 telemetry_data: dict[str, list] = dict()
 # Telemetry class instances list read from file in sequence
 telemetry_list: list[Telemetry] = []
+
+# tuple of proxy app name and data
+total_power_data_per_proxy_app: list[tuple] = list()
+
 for data_file_path in data_files:
     with open(data_file_path, "r") as data:
         lines = data.readlines()
@@ -52,11 +56,19 @@ for data_file_path in data_files:
         telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)]
     )
     print(plot_data)
-    axes = seaborn.lineplot(plot_data, x="sm_clock", y="power", errorbar=None)
+    axes = seaborn.lineplot(
+        plot_data,
+        x="sm_clock",
+        y="power",
+        errorbar=None,
+        markers=False,
+        dashes=False,
+        # style="sm_clock",
+    )  # [".", "x", "+", "o"])
     # axes.set_title("Power needed to operate at each configuration")
     axes.set_title("Potência necessária para a GPU operar em cada frequência")
     axes.ticklabel_format(style="plain")
-    axes.set(xlabel="Sm_clock (MHz)", ylabel="Potência (Watts)")
+    axes.set(xlabel="Sm clock (MHz)", ylabel="Potência (Watts)")
     figure = axes.get_figure()
     figure.savefig(f"sm_clock_to_power_{data_file_name}.png")
     plt.clf()
@@ -66,17 +78,24 @@ for data_file_path in data_files:
     # key: str(sm frequency) + '_' str(mem frequency) -> (start_time, end_time)
     time_of_start_and_end: dict[str, tuple] = dict()
     total_power_data: pandas.DataFrame = pandas.DataFrame(
-        columns=["sm_clock", "total power", "total time"], data=None
+        columns=["sm_clock", "total power", "total time", "name"], data=None
     )
     # key: str(sm frequency) + '_' str(mem frequency) -> number of observations
     total_obeservations: dict[str, int] = dict()
 
     for _, telemetry_listing in telemetry_data.items():
         for telemetry in telemetry_listing:
-            key = str(telemetry.sm_clock) # Change _ to key if memory frequency is desired
+            key = str(
+                telemetry.sm_clock
+            )  # Change _ to key if memory frequency is desired
             mask = total_power_data["sm_clock"] == key
             if len(total_power_data[mask]) == 0:
-                total_power_data.loc[len(total_power_data)] = [key, 0.0, None]
+                total_power_data.loc[len(total_power_data)] = [
+                    key,
+                    0.0,
+                    None,
+                    data_file_name,
+                ]
             if key not in total_obeservations:
                 total_obeservations[key] = 0
             # recalculate mask for altered dataframe
@@ -108,6 +127,7 @@ for data_file_path in data_files:
         total_power_data.loc[mask, "total time"] = total_time_took.total_seconds()
         print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
+    total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     print(total_power_data)
     plt.figure(figsize=(16, 8))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
@@ -115,7 +135,7 @@ for data_file_path in data_files:
     axes.set_title(
         "Potência total consumida para rodar o proxy app em cada configuração"
     )
-    axes.set(xlabel="Sm_clock (MHz)", ylabel="Potência total(Watts)")
+    axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total(Watts)")
     axes.ticklabel_format(style="plain", axis="y")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
@@ -128,13 +148,38 @@ for data_file_path in data_files:
     # axes.set_title("Total time () taken each clock configuration")
     axes.set_title("Tempo total para rodar o proxy app")
     axes.ticklabel_format(style="plain", axis="y")
-    axes.set(xlabel="Sm_clock (MHz)", ylabel="Tempo total (Segundos)")
+    axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
     figure.savefig(f"total_time_per_config_{data_file_name}.png")
     plt.clf()
 
-
+names = list(map(lambda x: x[0], total_power_data_per_proxy_app))
+# for total_power_data_tuple in total_power_data_per_proxy_app:
+#     total_power_data_df = total_power_data_tuple[1]
+total_power_data_df = pandas.DataFrame()
+for total_power_data_tuple in total_power_data_per_proxy_app:
+    total_power_data_df = pandas.concat(
+        [total_power_data_df, total_power_data_tuple[1]]
+    )
 # graph all times of all apps on the same figure
-#
+axes = seaborn.lineplot(
+    total_power_data_df,
+    x="sm_clock",
+    y="total power",
+    legend=True,
+    errorbar=None,
+    hue="name",
+    dashes=False,
+    # style="sm_clock",  markers=False
+)
+# axes.set_title("Total time () taken each clock configuration")
+axes.set_title("Tempo total para rodar o proxy app")
+axes.ticklabel_format(style="plain", axis="y")
+axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total (Watts)")
+axes.tick_params(axis="x", labelrotation=45)
+axes.xaxis.tick_bottom()
+plt.legend(title="Proxy app")
+figure = axes.get_figure()
+figure.savefig(f"total_power_per_config_all_apps.png")
