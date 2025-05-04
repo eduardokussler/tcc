@@ -71,8 +71,9 @@ for data_file_path in data_files:
     # key: str(sm frequency) + '_' str(mem frequency) -> number of observations
     total_obeservations: dict[str, int] = dict()
 
-    for key, telemetry_listing in telemetry_data.items():
+    for _, telemetry_listing in telemetry_data.items():
         for telemetry in telemetry_listing:
+            key = str(telemetry.sm_clock) # Change _ to key if memory frequency is desired
             mask = total_power_data["sm_clock"] == key
             if len(total_power_data[mask]) == 0:
                 total_power_data.loc[len(total_power_data)] = [key, 0.0, None]
@@ -104,7 +105,7 @@ for data_file_path in data_files:
         total_power_data.loc[mask, "total power"] = (
             total_power_data.loc[mask, "total power"] / total_obeservations[key]
         ) * total_time_took.total_seconds()
-        total_power_data.loc[mask, "total time ()"] = total_time_took.total_seconds()
+        total_power_data.loc[mask, "total time"] = total_time_took.total_seconds()
         print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
     print(total_power_data)
