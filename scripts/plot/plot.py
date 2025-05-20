@@ -73,7 +73,9 @@ for data_file_path in data_files:
         # style="sm_clock",
     )  # [".", "x", "+", "o"])
     # axes.set_title("Power needed to operate at each configuration")
-    axes.set_title(f"Potência necessária para a GPU operar em cada frequência - {data_file_name}")
+    axes.set_title(
+        f"Potência necessária para a GPU operar em cada frequência - {data_file_name}"
+    )
     axes.ticklabel_format(style="plain")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Potência (Watts)")
     figure = axes.get_figure()
@@ -142,7 +144,7 @@ for data_file_path in data_files:
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
-        "Potência total consumida para rodar o proxy app em cada configuração"
+        f"Potência total consumida para rodar o {data_file_name} em cada configuração"
     )
     axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total(Watts)")
     axes.ticklabel_format(style="plain", axis="y")
@@ -155,7 +157,7 @@ for data_file_path in data_files:
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
-    axes.set_title("Tempo total para rodar o proxy app")
+    axes.set_title(f"Tempo total para rodar {data_file_name}")
     axes.ticklabel_format(style="plain", axis="y")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
@@ -184,7 +186,7 @@ axes = seaborn.lineplot(
     # style="sm_clock",  markers=False
 )
 # axes.set_title("Total time () taken each clock configuration")
-axes.set_title("Tempo total para rodar o proxy app")
+axes.set_title(f"Tempo total para rodar {data_file_name}")
 axes.ticklabel_format(style="plain", axis="y")
 axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total (Watts)")
 axes.tick_params(axis="x", labelrotation=45)
@@ -195,8 +197,3 @@ figure.savefig(f"total_power_per_config_all_apps.png")
 
 
 # Plot memory usage and SM usage to see if it hit a bottleneck
-
-
-# Entry 2580MHz for laptop is also summing up the clocks above it. Probably a driver/nvidia-smi bug where
-# It reported those clocks as achievable but they are not in reality. I need to read the header line and ignore when
-# The reported clock exceeds 2580MHz
