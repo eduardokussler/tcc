@@ -33,10 +33,16 @@ total_power_data_per_proxy_app: list[tuple] = list()
 for data_file_path in data_files:
     with open(data_file_path, "r") as data:
         lines = data.readlines()
+        current_sm_clock = ""
         for line in lines:
             # Parse from file can return empty line for unused frequency on the first reading
-            telemetry: Telemetry = Telemetry.parse_from_file(line)
-            if telemetry is not None:
+            telemetry = Telemetry.parse_from_file(line)
+            if type(telemetry) is str:
+                current_sm_clock = telemetry
+            if telemetry is not None and type(telemetry) is not str:
+                # Ignore telemetry that doesn't match the specified clock
+                if str(telemetry.sm_clock) not in current_sm_clock:
+                    continue
                 if telemetry.dict_index not in telemetry_data:
                     telemetry_data[telemetry.dict_index] = []
                 telemetry_data[telemetry.dict_index].append(telemetry)
@@ -125,7 +131,9 @@ for data_file_path in data_files:
         total_power_data.loc[mask, "total power"] = (
             total_power_data.loc[mask, "total power"] / total_obeservations[key]
         ) * max(total_time_took.total_seconds(), 1)
-        total_power_data.loc[mask, "total time"] = max(total_time_took.total_seconds(), 1)
+        total_power_data.loc[mask, "total time"] = max(
+            total_time_took.total_seconds(), 1
+        )
         print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
@@ -186,4 +194,9 @@ figure = axes.get_figure()
 figure.savefig(f"total_power_per_config_all_apps.png")
 
 
-#Plot memory usage and SM usage to see if it hit a bottleneck
+# Plot memory usage and SM usage to see if it hit a bottleneck
+
+
+# Entry 2580MHz for laptop is also summing up the clocks above it. Probably a driver/nvidia-smi bug where
+# It reported those clocks as achievable but they are not in reality. I need to read the header line and ignore when
+# The reported clock exceeds 2580MHz

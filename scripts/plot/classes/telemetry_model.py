@@ -17,11 +17,11 @@ class Telemetry:
     dict_index: str
 
     @staticmethod
-    def parse_from_file(line: str):
+    def parse_from_file(line: str) -> str | type["Telemetry"]:
         split_line = line.split(" ")
         split_line = list(filter(lambda val: val != "", split_line))
         if len(split_line) <= 2:  # header saying the sm frequency
-            return
+            return line
         if "#" in split_line[0]:  # header of nvidia-smi dmon
             return
         split_line = list(map(lambda val: val if val != "-" else 0, split_line))
