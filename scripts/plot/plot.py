@@ -61,8 +61,8 @@ for data_file_path in data_files:
     plot_data = pandas.DataFrame(
         telemetry_list, columns=[field.name for field in dataclasses.fields(Telemetry)]
     )
-    mask = plot_data["sm_clock"] == 2550
-    print(plot_data.loc[mask])
+    # mask = plot_data["sm_clock"] == 2550
+    # print(plot_data.loc[mask])
     axes = seaborn.lineplot(
         plot_data,
         x="sm_clock",
@@ -73,7 +73,7 @@ for data_file_path in data_files:
         # style="sm_clock",
     )  # [".", "x", "+", "o"])
     # axes.set_title("Power needed to operate at each configuration")
-    axes.set_title("Potência necessária para a GPU operar em cada frequência")
+    axes.set_title(f"Potência necessária para a GPU operar em cada frequência - {data_file_name}")
     axes.ticklabel_format(style="plain")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Potência (Watts)")
     figure = axes.get_figure()
