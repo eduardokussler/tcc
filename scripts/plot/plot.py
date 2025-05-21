@@ -43,7 +43,7 @@ for data_file_path in data_files:
             if type(telemetry) is str:
                 current_sm_clock = telemetry
                 available_sm_clocks.add(current_sm_clock)
-            if len(available_sm_clocks) % 1 == 0:
+            if len(available_sm_clocks) % 3 == 0:
                 skip = False
             else:
                 skip = True
@@ -174,31 +174,36 @@ for data_file_path in data_files:
     plt.clf()
 
     mem_and_sm_usage: pandas.DataFrame = pandas.DataFrame(
-            columns=["sm_clock", "usage", "type"], data=None
-        )
+        columns=["sm_clock", "usage", "type"], data=None
+    )
     for usage_type in ["sm_usage", "mem_usage"]:
         for _, telemetry_listing in telemetry_data.items():
             for telemetry in telemetry_list:
-                mem_and_sm_usage.loc[len(total_power_data)] = [
+                mem_and_sm_usage.loc[len(mem_and_sm_usage)] = [
                     telemetry.sm_clock,
-                    telemetry.mem_usage if usage_type == "mem_usage" else telemetry.sm_usage,
-                    "Mem" if usage_type == "mem_usage" else "SM"
+                    telemetry.mem_usage
+                    if usage_type == "mem_usage"
+                    else telemetry.sm_usage,
+                    "Mem" if usage_type == "mem_usage" else "SM",
                 ]
+    print(mem_and_sm_usage)
     # Plot memory usage and SM usage to see if it hit a bottleneck
-    axes = seaborn.barplot(mem_and_sm_usage, x="sm_clock", y="usage", hue="type")
+    axes = seaborn.barplot(
+        mem_and_sm_usage, x="sm_clock", y="usage", hue="type", errorbar=None
+    )
     axes.set_title(f"Uso de SM e Memória - {data_file_name}")
     axes.ticklabel_format(style="plain", axis="y")
-    #axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
+    # axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
     # axes.xaxis.tick_bottom()
     plt.title(f"Uso de SM e Memória - {data_file_name}")
     plt.xticks(rotation=45)
-    plt.ylabel('Uso (%)')
+    plt.ylabel("Uso (%)")
     figure = axes.get_figure()
     figure.savefig(f"memory_and_sm_usage_{data_file_name}.png")
     plt.clf()
 
-   
+
 names = list(map(lambda x: x[0], total_power_data_per_proxy_app))
 # for total_power_data_tuple in total_power_data_per_proxy_app:
 #     total_power_data_df = total_power_data_tuple[1]
@@ -227,5 +232,3 @@ axes.xaxis.tick_bottom()
 plt.legend(title="Proxy app")
 figure = axes.get_figure()
 figure.savefig(f"total_power_per_config_all_apps.png")
-
-
