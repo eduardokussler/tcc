@@ -3,6 +3,7 @@ import sys
 import pandas
 import dataclasses
 import matplotlib.pyplot as plt
+import numpy as np
 from classes.telemetry_model import Telemetry
 from datetime import datetime, timedelta
 
@@ -73,6 +74,7 @@ for data_file_path in data_files:
     )
     # mask = plot_data["sm_clock"] == 2550
     # print(plot_data.loc[mask])
+    plt.yticks(np.arange(0, plot_data["power"].max(), 10))
     axes = seaborn.lineplot(
         plot_data,
         x="sm_clock",
@@ -149,7 +151,8 @@ for data_file_path in data_files:
         print(f"Total power consumed: {total_power_data.loc[mask, 'total power']}")
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
-    print(total_power_data)
+    #print(total_power_data)
+    plt.yticks(np.arange(0, total_power_data["total power"].max(), total_power_data["total power"].max() / len(total_power_data["sm_clock"])))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
@@ -163,6 +166,7 @@ for data_file_path in data_files:
     figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
+    plt.yticks(np.arange(0, total_power_data["total time"].max(), 10))
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
@@ -189,6 +193,8 @@ for data_file_path in data_files:
                     "Mem" if usage_type == "mem_usage" else "SM",
                 ]
     print(mem_and_sm_usage)
+
+    plt.yticks(np.arange(0, mem_and_sm_usage["usage"].max(), 10))
     # Plot memory usage and SM usage to see if it hit a bottleneck
     axes = seaborn.barplot(
         mem_and_sm_usage, x="sm_clock", y="usage", hue="type", errorbar=None
@@ -214,6 +220,8 @@ for total_power_data_tuple in total_power_data_per_proxy_app:
     total_power_data_df = pandas.concat(
         [total_power_data_df, total_power_data_tuple[1]]
     )
+
+plt.yticks(np.arange(0, total_power_data_df["total power"].max(), total_power_data_df["total power"].max() / len(total_power_data_df["total power"])))
 # graph all times of all apps on the same figure
 axes = seaborn.lineplot(
     total_power_data_df,
@@ -226,7 +234,7 @@ axes = seaborn.lineplot(
     # style="sm_clock",  markers=False
 )
 # axes.set_title("Total time () taken each clock configuration")
-axes.set_title(f"Tempo total para rodar todos os proxy apps - {machine_name}")
+axes.set_title(f"Potência total para rodar todos os proxy apps - {machine_name}")
 axes.ticklabel_format(style="plain", axis="y")
 axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total (Watts)")
 axes.tick_params(axis="x", labelrotation=45)
