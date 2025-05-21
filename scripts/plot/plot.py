@@ -29,17 +29,25 @@ telemetry_list: list[Telemetry] = []
 
 # tuple of proxy app name and data
 total_power_data_per_proxy_app: list[tuple] = list()
+plt.figure(figsize=(8.5, 6.38))
 
 for data_file_path in data_files:
     with open(data_file_path, "r") as data:
         lines = data.readlines()
         current_sm_clock = ""
+        skip = False
+        available_sm_clocks = set()
         for line in lines:
             # Parse from file can return empty line for unused frequency on the first reading
             telemetry = Telemetry.parse_from_file(line)
             if type(telemetry) is str:
                 current_sm_clock = telemetry
-            if telemetry is not None and type(telemetry) is not str:
+                available_sm_clocks.add(current_sm_clock)
+            if len(available_sm_clocks) % 1 == 0:
+                skip = False
+            else:
+                skip = True
+            if telemetry is not None and type(telemetry) is not str and not skip:
                 # Ignore telemetry that doesn't match the specified clock
                 if str(telemetry.sm_clock) not in current_sm_clock:
                     continue
@@ -140,7 +148,6 @@ for data_file_path in data_files:
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     print(total_power_data)
-    plt.figure(figsize=(19.2, 10.8))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
@@ -157,7 +164,7 @@ for data_file_path in data_files:
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
-    axes.set_title(f"Tempo total para rodar {data_file_name}")
+    axes.set_title(f"Tempo total para rodar - {data_file_name}")
     axes.ticklabel_format(style="plain", axis="y")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
@@ -166,6 +173,8 @@ for data_file_path in data_files:
     figure.savefig(f"total_time_per_config_{data_file_name}.png")
     plt.clf()
 
+
+   
 names = list(map(lambda x: x[0], total_power_data_per_proxy_app))
 # for total_power_data_tuple in total_power_data_per_proxy_app:
 #     total_power_data_df = total_power_data_tuple[1]
@@ -196,4 +205,3 @@ figure = axes.get_figure()
 figure.savefig(f"total_power_per_config_all_apps.png")
 
 
-# Plot memory usage and SM usage to see if it hit a bottleneck
