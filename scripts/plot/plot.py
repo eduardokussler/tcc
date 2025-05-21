@@ -13,9 +13,11 @@ FMT = "%H:%M:%S"
 pandas.options.display.float_format = "{:,.3f}".format
 
 seaborn.set_theme()
-"""Usage: python3 plot.py <telemetry_file1 telemetry_file2 telemetry_file3...>"""
+"""Usage: python3 plot.py <machine origin of the data> <fraction of samples to consider -> 1/this_parameter> <telemetry_file1 telemetry_file2 telemetry_file3...>"""
 # print(sys.argv)
-data_files = sys.argv[1:]
+machine_name = sys.argv[1]
+fraction_of_samples_to_consider = int(sys.argv[2])
+data_files = sys.argv[3:]
 
 """File has the following structure:
     #Time        gpu   pwr gtemp mtemp    sm   mem   enc   dec  mclk  pclk
@@ -43,7 +45,7 @@ for data_file_path in data_files:
             if type(telemetry) is str:
                 current_sm_clock = telemetry
                 available_sm_clocks.add(current_sm_clock)
-            if len(available_sm_clocks) % 3 == 0:
+            if len(available_sm_clocks) % fraction_of_samples_to_consider == 0:
                 skip = False
             else:
                 skip = True
@@ -82,12 +84,12 @@ for data_file_path in data_files:
     )  # [".", "x", "+", "o"])
     # axes.set_title("Power needed to operate at each configuration")
     axes.set_title(
-        f"Potência necessária para a GPU operar em cada frequência - {data_file_name}"
+        f"Potência necessária para a GPU operar em cada frequência - {data_file_name}/{machine_name}"
     )
     axes.ticklabel_format(style="plain")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Potência (Watts)")
     figure = axes.get_figure()
-    figure.savefig(f"sm_clock_to_power_{data_file_name}.png")
+    figure.savefig(f"sm_clock_to_power_{data_file_name}_{machine_name}.png")
     plt.clf()
     # process time spent on each clock configuration
     # calculate the total power spent to finish processing
@@ -151,26 +153,26 @@ for data_file_path in data_files:
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
-        f"Potência total consumida para rodar o {data_file_name} em cada configuração"
+        f"Potência total consumida para rodar o {data_file_name} em cada configuração - {machine_name}"
     )
     axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total(Watts)")
     axes.ticklabel_format(style="plain", axis="y")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
-    figure.savefig(f"total_power_per_config_{data_file_name}.png")
+    figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
-    axes.set_title(f"Tempo total para rodar - {data_file_name}")
+    axes.set_title(f"Tempo total para rodar - {data_file_name}/{machine_name}")
     axes.ticklabel_format(style="plain", axis="y")
     axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
     axes.xaxis.tick_bottom()
     figure = axes.get_figure()
-    figure.savefig(f"total_time_per_config_{data_file_name}.png")
+    figure.savefig(f"total_time_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
     mem_and_sm_usage: pandas.DataFrame = pandas.DataFrame(
@@ -191,16 +193,16 @@ for data_file_path in data_files:
     axes = seaborn.barplot(
         mem_and_sm_usage, x="sm_clock", y="usage", hue="type", errorbar=None
     )
-    axes.set_title(f"Uso de SM e Memória - {data_file_name}")
+    axes.set_title(f"Uso de SM e Memória - {data_file_name}/{machine_name}")
     axes.ticklabel_format(style="plain", axis="y")
     # axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
     axes.tick_params(axis="x", labelrotation=45)
     # axes.xaxis.tick_bottom()
-    plt.title(f"Uso de SM e Memória - {data_file_name}")
+    plt.title(f"Uso de SM e Memória - {data_file_name}/{machine_name}")
     plt.xticks(rotation=45)
     plt.ylabel("Uso (%)")
     figure = axes.get_figure()
-    figure.savefig(f"memory_and_sm_usage_{data_file_name}.png")
+    figure.savefig(f"memory_and_sm_usage_{data_file_name}_{machine_name}.png")
     plt.clf()
 
 
@@ -224,11 +226,11 @@ axes = seaborn.lineplot(
     # style="sm_clock",  markers=False
 )
 # axes.set_title("Total time () taken each clock configuration")
-axes.set_title(f"Tempo total para rodar {data_file_name}")
+axes.set_title(f"Tempo total para rodar todos os proxy apps - {machine_name}")
 axes.ticklabel_format(style="plain", axis="y")
 axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total (Watts)")
 axes.tick_params(axis="x", labelrotation=45)
 axes.xaxis.tick_bottom()
 plt.legend(title="Proxy app")
 figure = axes.get_figure()
-figure.savefig(f"total_power_per_config_all_apps.png")
+figure.savefig(f"total_power_per_config_all_apps_{machine_name}.png")
