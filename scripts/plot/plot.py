@@ -173,6 +173,30 @@ for data_file_path in data_files:
     figure.savefig(f"total_time_per_config_{data_file_name}.png")
     plt.clf()
 
+    mem_and_sm_usage: pandas.DataFrame = pandas.DataFrame(
+            columns=["sm_clock", "usage", "type"], data=None
+        )
+    for usage_type in ["sm_usage", "mem_usage"]:
+        for _, telemetry_listing in telemetry_data.items():
+            for telemetry in telemetry_list:
+                mem_and_sm_usage.loc[len(total_power_data)] = [
+                    telemetry.sm_clock,
+                    telemetry.mem_usage if usage_type == "mem_usage" else telemetry.sm_usage,
+                    "Mem" if usage_type == "mem_usage" else "SM"
+                ]
+    # Plot memory usage and SM usage to see if it hit a bottleneck
+    axes = seaborn.barplot(mem_and_sm_usage, x="sm_clock", y="usage", hue="type")
+    axes.set_title(f"Uso de SM e Memória - {data_file_name}")
+    axes.ticklabel_format(style="plain", axis="y")
+    #axes.set(xlabel="Sm clock (MHz)", ylabel="Tempo total (Segundos)")
+    axes.tick_params(axis="x", labelrotation=45)
+    # axes.xaxis.tick_bottom()
+    plt.title(f"Uso de SM e Memória - {data_file_name}")
+    plt.xticks(rotation=45)
+    plt.ylabel('Uso (%)')
+    figure = axes.get_figure()
+    figure.savefig(f"memory_and_sm_usage_{data_file_name}.png")
+    plt.clf()
 
    
 names = list(map(lambda x: x[0], total_power_data_per_proxy_app))
