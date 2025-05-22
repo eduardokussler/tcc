@@ -152,7 +152,7 @@ for data_file_path in data_files:
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     #print(total_power_data)
-    plt.yticks(np.arange(0, total_power_data["total power"].max(), total_power_data["total power"].max() / len(total_power_data["sm_clock"])))
+    plt.yticks(np.arange(0, total_power_data["total power"].max(), 10 if total_power_data["total time"].max() < 1000 else 10000))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
@@ -166,7 +166,7 @@ for data_file_path in data_files:
     figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
-    plt.yticks(np.arange(0, total_power_data["total time"].max(), 10))
+    plt.yticks(np.arange(0, total_power_data["total time"].max(), 10 if total_power_data["total time"].max() < 1000 else 10000))
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
@@ -182,9 +182,9 @@ for data_file_path in data_files:
     mem_and_sm_usage: pandas.DataFrame = pandas.DataFrame(
         columns=["sm_clock", "usage", "type"], data=None
     )
-    for usage_type in ["sm_usage", "mem_usage"]:
-        for _, telemetry_listing in telemetry_data.items():
-            for telemetry in telemetry_list:
+    for _, telemetry_listing in telemetry_data.items():
+        for telemetry in telemetry_list:
+            for usage_type in ["sm_usage", "mem_usage"]:
                 mem_and_sm_usage.loc[len(mem_and_sm_usage)] = [
                     telemetry.sm_clock,
                     telemetry.mem_usage
@@ -221,7 +221,7 @@ for total_power_data_tuple in total_power_data_per_proxy_app:
         [total_power_data_df, total_power_data_tuple[1]]
     )
 
-plt.yticks(np.arange(0, total_power_data_df["total power"].max(), total_power_data_df["total power"].max() / len(total_power_data_df["total power"])))
+plt.yticks(np.arange(0, total_power_data_df["total power"].max(), 10000))
 # graph all times of all apps on the same figure
 axes = seaborn.lineplot(
     total_power_data_df,
