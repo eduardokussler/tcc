@@ -25,16 +25,15 @@ data_files = sys.argv[3:]
     #HH:MM:SS    Idx     W     C     C     %     %     %     %   MHz   MHz
 """
 
-# key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
-telemetry_data: dict[str, list] = dict()
-# Telemetry class instances list read from file in sequence
-telemetry_list: list[Telemetry] = []
-
 # tuple of proxy app name and data
 total_power_data_per_proxy_app: list[tuple] = list()
 plt.figure(figsize=(8.5, 6.38))
 
 for data_file_path in data_files:
+    # key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
+    telemetry_data: dict[str, list] = dict()
+    # Telemetry class instances list read from file in sequence
+    telemetry_list: list[Telemetry] = []
     with open(data_file_path, "r") as data:
         lines = data.readlines()
         current_sm_clock = ""
