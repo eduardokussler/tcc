@@ -17,7 +17,7 @@ seaborn.set_theme()
 """Usage: python3 plot.py <machine origin of the data> <fraction of samples to consider -> 1/this_parameter> <telemetry_file1 telemetry_file2 telemetry_file3...>"""
 # print(sys.argv)
 machine_name = sys.argv[1]
-fraction_of_samples_to_consider = int(sys.argv[2])
+fraction_of_samples_to_consider = float(sys.argv[2])
 data_files = sys.argv[3:]
 
 """File has the following structure:
@@ -27,7 +27,7 @@ data_files = sys.argv[3:]
 
 # tuple of proxy app name and data
 total_power_data_per_proxy_app: list[tuple] = list()
-plt.figure(figsize=(8.5, 6.38))
+plt.figure(figsize=(8.8, 6.58))
 
 for data_file_path in data_files:
     # key: str(sm frequency) + '_' str(mem frequency). Value: array of readings (class telementry_model.Telemetry)
@@ -73,7 +73,7 @@ for data_file_path in data_files:
     )
     # mask = plot_data["sm_clock"] == 2550
     # print(plot_data.loc[mask])
-    step = int((plot_data["power"].max() - plot_data["power"].min()) / 10)
+    step = int((plot_data["power"].max()) / 10)
     plt.yticks(np.arange(0, plot_data["power"].max() + step, step))
     axes = seaborn.lineplot(
         plot_data,
@@ -152,7 +152,7 @@ for data_file_path in data_files:
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     #print(total_power_data)
-    step = int((total_power_data["total power"].max() - total_power_data["total power"].min()) / 10)
+    step = int((total_power_data["total power"].max()) / 10)
     plt.yticks(np.arange(0, total_power_data["total power"].max() + step, step))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
@@ -167,7 +167,7 @@ for data_file_path in data_files:
     figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
-    step = max(int((total_power_data["total time"].max() - total_power_data["total time"].min())/10), 5)
+    step = max(int((total_power_data["total time"].max()) /10), 5)
     plt.yticks(np.arange(0, total_power_data["total time"].max() + step, step))
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
@@ -224,7 +224,7 @@ for total_power_data_tuple in total_power_data_per_proxy_app:
         [total_power_data_df, total_power_data_tuple[1]]
     )
 
-step = int((total_power_data_df["total power"].max() - total_power_data_df["total power"].min()) / 10 )
+step = int((total_power_data_df["total power"].max()) / 10 )
 plt.yticks(np.arange(0, total_power_data_df["total power"].max() + step, step))
 # graph all times of all apps on the same figure
 axes = seaborn.lineplot(
