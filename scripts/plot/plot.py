@@ -191,6 +191,7 @@ for data_file_path in data_files:
                     else telemetry.sm_usage,
                     "Mem" if usage_type == "mem_usage" else "SM"])    
     temp = pandas.DataFrame(columns=["sm_clock", "usage", "type"], data=new_rows)
+    new_rows.clear()
     mem_and_sm_usage = pandas.concat([temp, mem_and_sm_usage], ignore_index=True)
 
     plt.yticks(np.arange(0, mem_and_sm_usage["usage"].max(), 10))
