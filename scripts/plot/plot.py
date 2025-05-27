@@ -73,7 +73,8 @@ for data_file_path in data_files:
     )
     # mask = plot_data["sm_clock"] == 2550
     # print(plot_data.loc[mask])
-    plt.yticks(np.arange(0, plot_data["power"].max(), int((plot_data["power"].max() - plot_data["power"].min()) / 10)))
+    step = int((plot_data["power"].max() - plot_data["power"].min()) / 10)
+    plt.yticks(np.arange(0, plot_data["power"].max() + step, step))
     axes = seaborn.lineplot(
         plot_data,
         x="sm_clock",
@@ -151,7 +152,8 @@ for data_file_path in data_files:
 
     total_power_data_per_proxy_app.append((data_file_name, total_power_data))
     #print(total_power_data)
-    plt.yticks(np.arange(0, total_power_data["total power"].max(), int((total_power_data["total power"].max() - total_power_data["total power"].min()) / 10)))
+    step = int((total_power_data["total power"].max() - total_power_data["total power"].min()) / 10)
+    plt.yticks(np.arange(0, total_power_data["total power"].max() + step, step))
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total power")
     # axes.set_title("Total power (Watts) consumed for each clock configuration")
     axes.set_title(
@@ -165,7 +167,8 @@ for data_file_path in data_files:
     figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
 
-    plt.yticks(np.arange(0, total_power_data["total time"].max(), max(int((total_power_data["total time"].max() - total_power_data["total time"].min())/10), 5)))
+    step = max(int((total_power_data["total time"].max() - total_power_data["total time"].min())/10), 5)
+    plt.yticks(np.arange(0, total_power_data["total time"].max() + step, step))
     # graph the total time () took for each config
     axes = seaborn.barplot(total_power_data, x="sm_clock", y="total time")
     # axes.set_title("Total time () taken each clock configuration")
@@ -194,7 +197,7 @@ for data_file_path in data_files:
     new_rows.clear()
     mem_and_sm_usage = pandas.concat([temp, mem_and_sm_usage], ignore_index=True)
 
-    plt.yticks(np.arange(0, mem_and_sm_usage["usage"].max(), 10))
+    plt.yticks(np.arange(0, 110, 10))
     # Plot memory usage and SM usage to see if it hit a bottleneck
     axes = seaborn.barplot(
         mem_and_sm_usage, x="sm_clock", y="usage", hue="type", errorbar=None
@@ -221,7 +224,8 @@ for total_power_data_tuple in total_power_data_per_proxy_app:
         [total_power_data_df, total_power_data_tuple[1]]
     )
 
-plt.yticks(np.arange(0, total_power_data_df["total power"].max(), int((total_power_data_df["total power"].max() - total_power_data_df["total power"].min()) / 10 )))
+step = int((total_power_data_df["total power"].max() - total_power_data_df["total power"].min()) / 10 )
+plt.yticks(np.arange(0, total_power_data_df["total power"].max() + step, step))
 # graph all times of all apps on the same figure
 axes = seaborn.lineplot(
     total_power_data_df,
