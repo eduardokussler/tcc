@@ -181,16 +181,17 @@ for data_file_path in data_files:
     mem_and_sm_usage: pandas.DataFrame = pandas.DataFrame(
         columns=["sm_clock", "usage", "type"], data=None
     )
+    new_rows = []
     for _, telemetry_listing in telemetry_data.items():
         for telemetry in telemetry_list:
             for usage_type in ["sm_usage", "mem_usage"]:
-                mem_and_sm_usage.loc[len(mem_and_sm_usage)] = [
-                    telemetry.sm_clock,
+                new_rows.append([telemetry.sm_clock,
                     telemetry.mem_usage
                     if usage_type == "mem_usage"
                     else telemetry.sm_usage,
-                    "Mem" if usage_type == "mem_usage" else "SM",
-                ]
+                    "Mem" if usage_type == "mem_usage" else "SM"])    
+    temp = pandas.DataFrame(columns=["sm_clock", "usage", "type"], data=new_rows)
+    mem_and_sm_usage = pandas.concat([temp, mem_and_sm_usage], ignore_index=True)
 
     plt.yticks(np.arange(0, mem_and_sm_usage["usage"].max(), 10))
     # Plot memory usage and SM usage to see if it hit a bottleneck
