@@ -166,7 +166,8 @@ for data_file_path in data_files:
     figure = axes.get_figure()
     figure.savefig(f"total_power_per_config_{data_file_name}_{machine_name}.png")
     plt.clf()
-
+    with open(f"total_power_and_time_per_config_{data_file_name}_{machine_name}.csv", "w") as file:
+        file.write(total_power_data.to_csv())
     step = max(int((total_power_data["total time"].max()) /10), 5)
     plt.yticks(np.arange(0, total_power_data["total time"].max() + step, step))
     # graph the total time () took for each config
@@ -226,7 +227,7 @@ for total_power_data_tuple in total_power_data_per_proxy_app:
 
 step = int((total_power_data_df["total power"].max()) / 10 )
 plt.yticks(np.arange(0, total_power_data_df["total power"].max() + step, step))
-# graph all times of all apps on the same figure
+# graph all powers of all apps on the same figure
 axes = seaborn.lineplot(
     total_power_data_df,
     x="sm_clock",
@@ -238,7 +239,7 @@ axes = seaborn.lineplot(
     # style="sm_clock",  markers=False
 )
 # axes.set_title("Total time () taken each clock configuration")
-axes.set_title(f"Potência total para rodar todos os proxy apps - {machine_name}")
+axes.set_title(f"Potência total para rodar cada proxy app - {machine_name}")
 axes.ticklabel_format(style="plain", axis="y")
 axes.set(xlabel="Sm clock (MHz)", ylabel="Potência total (Watts)")
 axes.tick_params(axis="x", labelrotation=45)
@@ -246,3 +247,27 @@ axes.xaxis.tick_bottom()
 plt.legend(title="Proxy app")
 figure = axes.get_figure()
 figure.savefig(f"total_power_per_config_all_apps_{machine_name}.png")
+plt.clf()
+
+step = int((total_power_data_df["total time"].max()) / 10 )
+plt.yticks(np.arange(0, total_power_data_df["total time"].max() + step, step))
+# graph all times of all apps on the same figure
+axes = seaborn.lineplot(
+    total_power_data_df,
+    x="sm_clock",
+    y="total time",
+    legend=True,
+    errorbar=None,
+    hue="name",
+    dashes=False,
+    # style="sm_clock",  markers=False
+)
+# axes.set_title("Total time () taken each clock configuration")
+axes.set_title(f"Tempo total para rodar cada proxy app - {machine_name}")
+axes.ticklabel_format(style="plain", axis="y")
+axes.set(xlabel="Sm clock (MHz)", ylabel="Segundos")
+axes.tick_params(axis="x", labelrotation=45)
+axes.xaxis.tick_bottom()
+plt.legend(title="Proxy app")
+figure = axes.get_figure()
+figure.savefig(f"total_time_per_config_all_apps_{machine_name}.png")
